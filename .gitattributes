@@ -1,1 +1,5 @@
 package-lock.json binary
+out/** export-ignore
+out/** binary
+out/** linguist-vendored
+next.config.js linguist-vendored
