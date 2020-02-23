@@ -4,9 +4,8 @@
   "description": "Source code for https://lalot.ai",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
-    "build": "next build && next export",
-    "start": "next start"
+    "start": "next",
+    "build": "next build && next export"
   },
   "repository": {
     "type": "git",
