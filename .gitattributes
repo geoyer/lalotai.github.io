@@ -3,4 +3,4 @@ out/** export-ignore
 out/** binary
 out/** linguist-vendored
 next.config.js linguist-vendored
-pages/_app.js linguist-vendored
+pages/*.js linguist-vendored
