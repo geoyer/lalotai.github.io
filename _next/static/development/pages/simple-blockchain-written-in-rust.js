@@ -1867,16 +1867,10 @@ function MDXContent(_ref) {
       lineNumber: 22
     },
     __self: this
-  }), Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_3__["mdx"])("h1", {
+  }), Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_3__["mdx"])("p", {
     __source: {
       fileName: _jsxFileName,
       lineNumber: 24
-    },
-    __self: this
-  }, title), Object(_mdx_js_react__WEBPACK_IMPORTED_MODULE_3__["mdx"])("p", {
-    __source: {
-      fileName: _jsxFileName,
-      lineNumber: 25
     },
     __self: this
   }, "text \uD83D\uDC4B"));
