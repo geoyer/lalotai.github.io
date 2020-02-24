@@ -23,6 +23,9 @@ const md = {
 export default ({Component, pageProps}) => {
   return (
     <MDXProvider components={md}>
+      <Head>
+        <title>Lalotai</title>
+      </Head>
       <Component {...pageProps} />
     </MDXProvider>
   );
