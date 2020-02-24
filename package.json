@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "next",
-    "build": "next build && next export"
+    "build": "next build && next export",
+    "preview": "serve out -p 8000"
   },
   "repository": {
     "type": "git",
@@ -15,13 +16,18 @@
   "license": "ISC",
   "homepage": "https://lalot.ai",
   "dependencies": {
+    "@mdx-js/loader": "1.5.7",
+    "@next/mdx": "9.2.2",
     "next": "9.2.2",
     "react": "16.12.0",
-    "react-dom": "16.12.0"
+    "react-dom": "16.12.0",
+    "remark-emoji": "2.0.2",
+    "remark-images": "1.0.0"
   },
   "devDependencies": {
     "@types/node": "13.7.4",
     "@types/react": "16.9.22",
+    "serve": "11.3.0",
     "typescript": "3.8.2"
   }
 }
