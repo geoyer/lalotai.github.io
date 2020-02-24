@@ -11,5 +11,14 @@ const withMDX = require('@next/mdx')({
 module.exports = withMDX({
   pageExtensions: ['js', 'tsx', 'mdx'],
   exportTrailingSlash: true,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.node = {
+        fs: 'empty',
+      };
+    }
+
+    return config;
+  }
 });
 
