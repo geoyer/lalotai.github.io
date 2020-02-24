@@ -1,5 +1,6 @@
 import glob from 'glob';
-import { ReactNode } from 'react';
+import Link from 'next/link';
+import React, { ReactNode } from 'react';
 import { NextPage } from 'next';
 
 interface Page {
@@ -21,7 +22,9 @@ const Home: NextPage = (props: Props) => {
       <ul>
         {pages.map(p => (
           <li key={p.slug}>
-            {p.title} - {p.slug}
+            <Link href={`/${p.slug}/`}>
+              <a>{p.title}</a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -30,7 +33,8 @@ const Home: NextPage = (props: Props) => {
 };
 
 // get a list of posts
-Home.getInitialProps = async (props) => ({
+Home.getInitialProps = async (): Promise<Props> => ({
+  // eslint-disable-next-line
   pages: glob.sync('pages/*.mdx').map((p: any) => ({
       ...require(`../${p}`),
       slug: p.match(/\/(.*)\.mdx$/)[1],

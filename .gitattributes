@@ -1,6 +1,2 @@
 package-lock.json binary
-out/** export-ignore
-out/** binary
-out/** linguist-vendored
-next.config.js linguist-vendored
-pages/*.js linguist-vendored
+**/*.js linguist-vendored
