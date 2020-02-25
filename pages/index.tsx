@@ -76,7 +76,7 @@ const Home: NextPage = (props: Props) => {
         ))}
       </ul>
       <EditSuggestion
-        href="https://github.com/lalotai/lalotai.github.io#contribute"
+        href="https://github.com/lalotai/lalotai.github.io#contributing"
       />
     </StyledHome>
   )
