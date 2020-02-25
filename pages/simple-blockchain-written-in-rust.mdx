@@ -9,7 +9,7 @@ export const metadata = {
 
 [rust-blockchain](https://github.com/lalotai/rust-blockchain) is a simple implementation of proof-of-work blockchain written in Rust :crab: As stated in the repo, this is mostly a playground and is therefore not intended to be taken [too] seriously.
 
-The code is meant to be run on a single machine but in multiple windows. One window can broadcast randomly generated transactions and another mines the blocks once a minimum number of transactions has been found in mempool.
+The code is meant to be run on a single machine but in multiple windows. All nodes run and listen on the loopback address under ports 4000-4004. One window can broadcast randomly generated transactions and another mines the blocks once a minimum number of transactions has been collected in the mempool.
 
 The video below shows the miner in action:
 
@@ -17,25 +17,25 @@ The video below shows the miner in action:
 
 ### Design
 
-The design of the blockchain is typical of any proof-of-work concept. Received transactions are assembled in a block, sorted by fees in descending order, and a hash is computed to see if the difficulty has been met.
+The design of the blockchain is typical of any proof-of-work concept. Received transactions are assembled into a block candidate, sorted by fees in descending order, and a hash is computed to see if the difficulty has been met.
 
-On my local i9 w/ 64GB of RAM, the difficulty of 2 seems to be good enough for testing (the hash is not found too quickly or too slowly). Therefore a computed sha256 hash of the new block might look something like this: `0083b052` (the hash is trimmed; notice the 2 zeros at the front).
+On my local :computer: i9 w/ 64GB of RAM, the difficulty of 2 seems to be good enough for testing (the hash is not found too quickly or too slowly). Therefore a computed sha256 hash of the new block might look something like this: `0083b052` (the hash is trimmed; notice the 2 zeros at the front). Of course in the real world, [the difficulty would be adjusted dynamically](https://en.bitcoin.it/wiki/Difficulty) (eg: depending on the ever changing hash rate of the network).
 
-Communication between nodes is done via a simple TCP stream. Once the node joins, it pings other nodes to catch up on any missed transactions and blocks. As soon as the new node is caught up, it begins mining transactions in its own mempool. You can test this by running `cargo run mine` in one window, and then a few seconds later the same command in another. Notice how the second window has all the blocks and transactions.
+Communication between nodes is done via a simple TCP stream. Once the node joins, it pings other nodes to catch up on any missed transactions and blocks. As soon as the new node is caught up, it begins mining transactions in its own mempool. While broadcasting transactions, you can test this by running `cargo run mine` in one window, and then a few seconds later the same command in another. Notice how the second window catches up with all the blocks and transactions.
 
-The command to broadcast transactions supports targeting specific nodes. The sync of all nodes will still work, because nodes themselves propagate newly mined blocks (and old blocks + transactions when requested).
+The command to broadcast transactions supports targeting specific nodes. The sync of all nodes will still work even if you don't target it explicitly, because nodes themselves propagate newly mined blocks to anyone that's listening (and old blocks + transactions when requested).
 
 ### Concurrency
 
-There's a few interesting design choices in this implementation. Besides handling requests of other nodes, we have to do a few things in parallel:
+There's a few interesting design choices in this implementation. Besides handling requests of other nodes and broadcasting newly mined blocks, we have to do a few things in parallel:
 
 1. Receive newly mined blocks
 1. Receive newly created/propagated transactions
-1. Continuously mine new blocks
+1. Continuously attempt to mine new blocks
 
-Doing this concurrently allows the contents of the new block to stay dynamic (if a transaction with a higher fee arrives, it's our incentive to sneak it into the block faster).
+Doing this concurrently allows the contents of the new block to stay dynamic (if a transaction with a higher fee arrives, it's in our best interest to put it into an existing block candidate).
 
-[src/node/miner.rs](https://github.com/lalotai/rust-blockchain/blob/master/src/node/miner.rs) (which runs in a separate thread) does this in a loop, by constantly locking and unlocking a mutex, which is not necessarily a good thing since this happens so often. But it's necessary in order to receive new transactions:
+[src/node/miner.rs](https://github.com/lalotai/rust-blockchain/blob/master/src/node/miner.rs) (which runs in a separate thread) does this in a loop, by constantly locking and unlocking a mutex, which is not necessarily a good thing since this happens so often. But it's a good way to fetch new transactions:
 
 <Code
   lang="rust"
@@ -46,10 +46,35 @@ txs = {
 };`}
 />
 
-One possible optimization here is to fetch transactions only when new ones arrive.
+Notice the mutex is unlocked quickly when `mp` goes out of scope. One possible optimization here is to fetch transactions only when new ones arrive (there's no need to retrieve the old ones over and over again).
 
 ---
 
-If you look at the code closely, you might notice that the miner does 256 hash attempts in parallel per loop (adjusted via `concurrent_hashes` in `Settings.toml`). This is because not much time is wasted working all those cores before checking for any new blocks or transactions. It's possible to of course do just 1 hash attempt per loop, but those expensive mutex locks and unlocks will definitely add up.
+If you look at the code closely, you might notice that the miner does 256 hash attempts in parallel per loop (adjusted via `concurrent_hashes` in `Settings.toml`). This is because doing all those hash computations in parallel "at once" does not cause a significant delay before restarting the loop and checking for any new blocks or transactions. Of course it's possible to do just 1 hash attempt per loop, but the process of locking and unlocking mutexes often will add up quickly.
 
 This is also why your CPU will occasionally spike on all cores when the miner tries to create a new block.
+
+### Rust
+
+Overall, the language has been extremely helpful in debugging and writing the program. As sometimes reported by others, there's some wrestling with the compiler during development but once the code is refactored, it runs beautifully.
+
+It's been amazing to see the work that the [Rust team](https://github.com/orgs/rust-lang/people) has accomplished. Most of the time the compiler pinpoints the problem precisely; only once in a while does it suggest something that leads to another suggestion that leads to the first suggestion again.
+
+But after a closer look -- it's usually the developer's mistake for writing something a silly way. tl&dr: It's great to be able to catch all of these issues at compile time and Rust does exactly that :muscle:
+
+### What's missing
+
+A lot of things. There's no support for:
+
+- Discover/gossip & communication between machines (as opposed to ports only)
+- A wallet, proper addresses and/or UTXOs
+- Support for managing uncle chains and reorgs
+- A more robust protocol for communicating between nodes
+- Built-in database to actually store any of the data
+- Proper validation rules across everything
+
+Since this is not meant to be used as anything serious, all of these are left to the reader as possible exercises and are listed in the [README section](https://github.com/lalotai/rust-blockchain#exercises).
+
+### [Contributing](https://github.com/lalotai/rust-blockchain#contributing)
+
+As usual, [pull requests](https://github.com/lalotai/rust-blockchain/pulls) in the form of bug fixes, idiomatic or general code improvements, typos and cleanup are always welcome. No promises on big feature additions as this repo is meant to stay lightweight and simple.
