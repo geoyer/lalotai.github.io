@@ -1,3 +1,5 @@
+import Code from '../components/Code'
+
 export const title = 'A simple proof-of-work blockchain written in Rust'
 
 export const metadata = {
@@ -17,6 +19,37 @@ The video below shows the miner in action:
 
 The design of the blockchain is typical of any proof-of-work concept. Received transactions are assembled in a block, sorted by fees in descending order, and a hash is computed to see if the difficulty has been met.
 
-On my local i9 w/ 64GB of RAM, the difficulty of 2 seems to be good enough for testing (the hash is not found too quickly or too slowly). Therefore a computed sha256 hash of the new block might look something like this: `00cd8a380e8d5fd3ac47c1f880390341d40b11485e8ae946d8fa3d466f23fe89` (notice the 2 zeros at the front).
+On my local i9 w/ 64GB of RAM, the difficulty of 2 seems to be good enough for testing (the hash is not found too quickly or too slowly). Therefore a computed sha256 hash of the new block might look something like this: `0083b052` (the hash is trimmed; notice the 2 zeros at the front).
 
-Communication between nodes is done via a simple TCP stream. Once the node joins, it pings other nodes to catch up on any missed transactions and blocks. As soon as the new node is caught up it begins mining transactions in its own mempool. You can test this by running `cargo run mine` in one window, and then a few seconds later the same command in another. Notice how the second window has all the blocks and transactions.
+Communication between nodes is done via a simple TCP stream. Once the node joins, it pings other nodes to catch up on any missed transactions and blocks. As soon as the new node is caught up, it begins mining transactions in its own mempool. You can test this by running `cargo run mine` in one window, and then a few seconds later the same command in another. Notice how the second window has all the blocks and transactions.
+
+The command to broadcast transactions supports targeting specific nodes. The sync of all nodes will still work, because nodes themselves propagate newly mined blocks (and old blocks + transactions when requested).
+
+### Concurrency
+
+There's a few interesting design choices in this implementation. Besides handling requests of other nodes, we have to do a few things in parallel:
+
+1. Receive newly mined blocks
+1. Receive newly created/propagated transactions
+1. Continuously mine new blocks
+
+Doing this concurrently allows the contents of the new block to stay dynamic (if a transaction with a higher fee arrives, it's our incentive to sneak it into the block faster).
+
+[src/node/miner.rs](https://github.com/lalotai/rust-blockchain/blob/master/src/node/miner.rs) (which runs in a separate thread) does this in a loop, by constantly locking and unlocking a mutex, which is not necessarily a good thing since this happens so often. But it's necessary in order to receive new transactions:
+
+<Code
+  lang="rust"
+  code={`// fetch transactions from mempool
+txs = {
+    let mut mp = mempool.lock().unwrap();
+    mp.get_all().to_vec()
+};`}
+/>
+
+One possible optimization here is to fetch transactions only when new ones arrive.
+
+---
+
+If you look at the code closely, you might notice that the miner does 256 hash attempts in parallel per loop (adjusted via `concurrent_hashes` in `Settings.toml`). This is because not much time is wasted working all those cores before checking for any new blocks or transactions. It's possible to of course do just 1 hash attempt per loop, but those expensive mutex locks and unlocks will definitely add up.
+
+This is also why your CPU will occasionally spike on all cores when the miner tries to create a new block.
