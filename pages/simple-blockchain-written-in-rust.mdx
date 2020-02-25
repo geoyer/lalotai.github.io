@@ -21,7 +21,7 @@ The design of the blockchain is typical of any proof-of-work concept. Received t
 
 On my local :computer: i9 w/ 64GB of RAM, the difficulty of 2 seems to be good enough for testing (the hash is not found too quickly or too slowly). Therefore a computed sha256 hash of the new block might look something like this: `0083b052` (the hash is trimmed; notice the 2 zeros at the front). Of course in the real world, [the difficulty would be adjusted dynamically](https://en.bitcoin.it/wiki/Difficulty) (eg: depending on the ever changing hash rate of the network).
 
-Communication between nodes is done via a simple TCP stream. Once the node joins, it pings other nodes to catch up on any missed transactions and blocks. As soon as the new node is caught up, it begins mining transactions in its own mempool. While broadcasting transactions, you can test this by running `cargo run mine` in one window, and then a few seconds later the same command in another. Notice how the second window catches up with all the blocks and transactions.
+Communication between nodes is done via a simple TCP stream. Once the node joins, it pings other nodes to catch up on any missed transactions and blocks. As soon as the new node is caught up, it begins mining transactions from its own mempool. While broadcasting transactions, you can test this by running `cargo run mine` in one window, and then a few seconds later the same command in another. Notice how the second miner catches up with all the blocks and transactions.
 
 The command to broadcast transactions supports targeting specific nodes. The sync of all nodes will still work even if you don't target it explicitly, because nodes themselves propagate newly mined blocks to anyone that's listening (and old blocks + transactions when requested).
 
@@ -60,7 +60,7 @@ Overall, the language has been extremely helpful in debugging and writing the pr
 
 It's been amazing to see the work that the [Rust team](https://github.com/orgs/rust-lang/people) has accomplished. Most of the time the compiler pinpoints the problem precisely; only once in a while does it suggest something that leads to another suggestion that leads to the first suggestion again.
 
-But after a closer look -- it's usually the developer's mistake for writing something a silly way. tl&dr: It's great to be able to catch all of these issues at compile time and Rust does exactly that :muscle:
+But after a closer look -- it's usually the developer's mistake for writing something in a silly way. tl&dr: It's great to be able to catch all of these issues at compile time and Rust does exactly that :muscle:
 
 ### What's missing
 
