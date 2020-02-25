@@ -13,7 +13,7 @@ export default ({Component, pageProps}) => {
     }}>
       <Head>
         <title>Lalotai</title>
-        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700,900&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Merriweather:300,400,700,900&display=swap" rel="stylesheet" />
       </Head>
       <Normalize />
       <AppWrapper>

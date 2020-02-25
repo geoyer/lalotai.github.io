@@ -21,6 +21,18 @@ const StyledPostWrapper = styled.div`
   .post {
     text-align: left;
     margin: 40px 0;
+    line-height: 1.6;
+    color: #333;
+    font-size: 15px;
+    font-weight: 300;
+
+    code {
+      background: #eee;
+      font-size: 15px;
+      padding: 2px 5px;
+      letter-spacing: -0.02em;
+      border-radius: 1px;
+    }
   }
 `
 

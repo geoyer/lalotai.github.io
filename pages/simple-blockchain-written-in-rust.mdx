@@ -5,4 +5,18 @@ export const metadata = {
   slug: 'simple-blockchain-written-in-rust'
 }
 
-text :wave:
+[rust-blockchain](https://github.com/lalotai/rust-blockchain) is a simple implementation of proof-of-work blockchain written in Rust :crab: As stated in the repo, this is mostly a playground and is therefore not intended to be taken [too] seriously.
+
+The code is meant to be run on a single machine but in multiple windows. One window can broadcast randomly generated transactions and another mines the blocks once a minimum number of transactions has been found in mempool.
+
+The video below shows the miner in action:
+
+<script id="asciicast-304022" src="https://asciinema.org/a/304022.js" async></script>
+
+### Design
+
+The design of the blockchain is typical of any proof-of-work concept. Received transactions are assembled in a block, sorted by fees in descending order, and a hash is computed to see if the difficulty has been met.
+
+On my local i9 w/ 64GB of RAM, the difficulty of 2 seems to be good enough for testing (the hash is not found too quickly or too slowly). Therefore a computed sha256 hash of the new block might look something like this: `00cd8a380e8d5fd3ac47c1f880390341d40b11485e8ae946d8fa3d466f23fe89` (notice the 2 zeros at the front).
+
+Communication between nodes is done via a simple TCP stream. Once the node joins, it pings other nodes to catch up on any missed transactions and blocks. As soon as the new node is caught up it begins mining transactions in its own mempool. You can test this by running `cargo run mine` in one window, and then a few seconds later the same command in another. Notice how the second window has all the blocks and transactions.

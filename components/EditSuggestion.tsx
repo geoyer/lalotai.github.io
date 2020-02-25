@@ -10,7 +10,7 @@ const StyledEditSuggestion = styled.div`
   font-size: 12px;
   padding: 15px;
   width: 300px;
-  line-height: 1.5;
+  line-height: 1.6;
 `
 
 const EditSuggestion = (props: any): any => {
