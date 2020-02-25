@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[12],{"8z8O":function(n,w,i){(window.__NEXT_P=window.__NEXT_P||[]).push(["/simple-blockchain-written-in-rust",function(){return i("1bI9")}])}},[["8z8O",1,2,0,3,5]]]);
