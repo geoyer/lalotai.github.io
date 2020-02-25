@@ -1,0 +1,1 @@
+self.__BUILD_MANIFEST = (function(a){return {"/":[a],"/index":[a],"/simple-blockchain-written-in-rust":[a]}}("static\u002Fchunks\u002F9f723e23887ddf804ca7eae2e065f4e4dbc72bf5.924a29a2142216a7cb3c.js"));self.__BUILD_MANIFEST_CB && self.__BUILD_MANIFEST_CB()
