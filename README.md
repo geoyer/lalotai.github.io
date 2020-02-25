@@ -21,7 +21,7 @@ git checkout master
 mv out/* . # delete any old files if necessary
 ```
 
-## Contribute
+## Contributing
 
 Article improvements, typos and general cleanup are always welcome. Please create a pull request in the repo.
 
