@@ -1,33 +1,24 @@
-import React from 'react';
-import Head from 'next/head';
-import styled from 'styled-components';
-import { MDXProvider } from '@mdx-js/react';
-
-const Wrapper = styled.div`
-
-`;
-
-const md = {
-  wrapper: props => (
-    <Wrapper>
-      <Head>
-        <title>{props.title}</title>
-      </Head>
-      <h1>{props.title}</h1>
-      <main {...props} />
-    </Wrapper>
-  ),
-  // h1: props => <h1 style={{color: 'black'}} {...props} />
-};
+import React from 'react'
+import Normalize from 'react-normalize'
+import Head from 'next/head'
+import styled from 'styled-components'
+import { MDXProvider } from '@mdx-js/react'
+import AppWrapper from '../components/AppWrapper'
+import PostWrapper from '../components/PostWrapper'
 
 export default ({Component, pageProps}) => {
   return (
-    <MDXProvider components={md}>
+    <MDXProvider components={{
+      wrapper: PostWrapper
+    }}>
       <Head>
         <title>Lalotai</title>
+        <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700,900&display=swap" rel="stylesheet" />
       </Head>
-      <Component {...pageProps} />
+      <Normalize />
+      <AppWrapper>
+        <Component {...pageProps} />
+      </AppWrapper>
     </MDXProvider>
-  );
-};
-
+  )
+}

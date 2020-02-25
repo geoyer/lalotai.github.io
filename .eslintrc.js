@@ -3,17 +3,22 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: [
     '@typescript-eslint',
-    'react',
+    'react'
   ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:react/recommended',
+    'plugin:react/recommended'
   ],
   settings: {
     react: {
-      version: 'detect',
+      version: 'detect'
     },
+  },
+  rules: {
+    semi: 0,
+    '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/no-explicit-any': 0
   },
 };
